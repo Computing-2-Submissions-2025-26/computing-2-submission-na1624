@@ -14,17 +14,17 @@ const RING_END = 38;     // path position where the shared ring ends
 // Power-up squares keyed by shared position (0-35, Red's coordinate system).
 // Positions 0 (Red entry) and 18 (Blue entry) are intentionally left clear.
 const POWER_UP_SQUARES = Object.freeze({
-    3:  "boost",
-    7:  "shield",
-    11: "freeze",
-    15: "swap",
-    20: "bomb",
-    25: "sprint",
-    29: "boost",
-    34: "shield"
+    "3": "boost",
+    "7": "shield",
+    "11": "freeze",
+    "15": "swap",
+    "20": "bomb",
+    "25": "sprint",
+    "29": "boost",
+    "34": "shield"
 });
 
-// ── Private helpers ───────────────────────────────────────────────────────────
+// ── Private helpers ─────────────────────────────────────────────────────────
 
 /**
  * Returns the opponent's colour.
@@ -32,7 +32,11 @@ const POWER_UP_SQUARES = Object.freeze({
  * @returns {string}
  */
 const opponent = function (player) {
-    return (player === "red") ? "blue" : "red";
+    return (
+        (player === "red")
+        ? "blue"
+        : "red"
+    );
 };
 
 /**
@@ -46,9 +50,11 @@ const toShared = function (pos, player) {
     if (pos < RING_START || pos > RING_END) {
         return -1;
     }
-    return (player === "blue")
+    return (
+        (player === "blue")
         ? (pos - RING_START + BLUE_OFFSET) % RING_LENGTH
-        : pos - RING_START;
+        : pos - RING_START
+    );
 };
 
 /**
@@ -58,9 +64,11 @@ const toShared = function (pos, player) {
  * @returns {number}
  */
 const fromShared = function (shared, player) {
-    const ringIdx = (player === "blue")
+    const ringIdx = (
+        (player === "blue")
         ? (shared - BLUE_OFFSET + RING_LENGTH) % RING_LENGTH
-        : shared;
+        : shared
+    );
     return ringIdx + RING_START;
 };
 
@@ -89,15 +97,15 @@ const piecesAtShared = function (pieces, targetPlayer, sharedPos) {
  * @returns {GameState}
  */
 const setPiecePos = function (state, player, pieceIdx, newPos) {
-    return {
-        ...state,
-        pieces: {
-            ...state.pieces,
-            [player]: state.pieces[player].map(function (pos, idx) {
-                return (idx === pieceIdx) ? newPos : pos;
-            })
-        }
-    };
+    const newPieces = Object.assign({}, state.pieces);
+    newPieces[player] = state.pieces[player].map(function (pos, idx) {
+        return (
+            (idx === pieceIdx)
+            ? newPos
+            : pos
+        );
+    });
+    return Object.assign({}, state, {pieces: newPieces});
 };
 
 /**
@@ -109,15 +117,15 @@ const setPiecePos = function (state, player, pieceIdx, newPos) {
  * @returns {GameState}
  */
 const setShield = function (state, player, pieceIdx, value) {
-    return {
-        ...state,
-        shields: {
-            ...state.shields,
-            [player]: state.shields[player].map(function (s, idx) {
-                return (idx === pieceIdx) ? value : s;
-            })
-        }
-    };
+    const newShields = Object.assign({}, state.shields);
+    newShields[player] = state.shields[player].map(function (s, idx) {
+        return (
+            (idx === pieceIdx)
+            ? value
+            : s
+        );
+    });
+    return Object.assign({}, state, {shields: newShields});
 };
 
 /**
@@ -129,15 +137,15 @@ const setShield = function (state, player, pieceIdx, value) {
  * @returns {GameState}
  */
 const setFrozen = function (state, player, pieceIdx, value) {
-    return {
-        ...state,
-        frozen: {
-            ...state.frozen,
-            [player]: state.frozen[player].map(function (f, idx) {
-                return (idx === pieceIdx) ? value : f;
-            })
-        }
-    };
+    const newFrozen = Object.assign({}, state.frozen);
+    newFrozen[player] = state.frozen[player].map(function (f, idx) {
+        return (
+            (idx === pieceIdx)
+            ? value
+            : f
+        );
+    });
+    return Object.assign({}, state, {frozen: newFrozen});
 };
 
 /**
@@ -166,24 +174,22 @@ const sendToSpawn = function (state, player, pieceIdx) {
  */
 const nextTurn = function (state, nextPlayer) {
     const justFinished = opponent(nextPlayer);
-    return {
-        ...state,
+    const newFrozen = Object.assign({}, state.frozen);
+    newFrozen[justFinished] = state.frozen[justFinished].map(function (f) {
+        return (
+            f > 0
+            ? f - 1
+            : 0
+        );
+    });
+    return Object.assign({}, state, {
         currentPlayer: nextPlayer,
         phase: "roll",
         dice: null,
         actionPiece: null,
         sprintPiece: null,
-        frozen: {
-            ...state.frozen,
-            [justFinished]: state.frozen[justFinished].map(function (f) {
-                return (
-                    f > 0
-                    ? f - 1
-                    : 0
-                );
-            })
-        }
-    };
+        frozen: newFrozen
+    });
 };
 
 /**
@@ -212,12 +218,11 @@ const applyMine = function (state, player, pieceIdx, sharedPos) {
     if (!state.mines.includes(sharedPos)) {
         return state;
     }
-    const withoutMine = {
-        ...state,
+    const withoutMine = Object.assign({}, state, {
         mines: state.mines.filter(function (m) {
             return m !== sharedPos;
         })
-    };
+    });
     if (withoutMine.shields[player][pieceIdx]) {
         return withoutMine;   // shield blocks; persists until piece moves
     }
@@ -273,8 +278,6 @@ const dedupe = function (arr) {
  * @returns {GameState}
  */
 const applyPowerUp = function (state, player, pieceIdx, powerUp, sharedPos) {
-    const opp = opponent(player);
-
     if (powerUp === "boost") {
         const currentPos = state.pieces[player][pieceIdx];
         const boostedPos = Math.min(currentPos + BOOST_STEPS, FINISH);
@@ -292,26 +295,31 @@ const applyPowerUp = function (state, player, pieceIdx, powerUp, sharedPos) {
     }
 
     if (powerUp === "sprint") {
-        return { ...state, phase: "sprint", sprintPiece: pieceIdx };
+        return Object.assign({}, state, {
+            phase: "sprint",
+            sprintPiece: pieceIdx
+        });
     }
 
     if (powerUp === "bomb") {
         const before = (sharedPos - 1 + RING_LENGTH) % RING_LENGTH;
-        const after  = (sharedPos + 1) % RING_LENGTH;
-        return {
-            ...state,
+        const after = (sharedPos + 1) % RING_LENGTH;
+        return Object.assign({}, state, {
             mines: dedupe([...state.mines, before, sharedPos, after])
-        };
+        });
     }
 
     if (powerUp === "swap") {
-        return { ...state, phase: "swap", actionPiece: pieceIdx };
+        return Object.assign({}, state, {
+            phase: "swap",
+            actionPiece: pieceIdx
+        });
     }
 
     return state;
 };
 
-// ── Public API ────────────────────────────────────────────────────────────────
+// ── Public API ───────────────────────────────────────────────────────────────
 
 /**
  * Creates and returns a fresh game state with both players' pieces in spawn.
@@ -327,15 +335,15 @@ const createGame = function () {
         winner: null,
         mines: [],
         pieces: {
-            red:  [SPAWN, SPAWN, SPAWN, SPAWN],
+            red: [SPAWN, SPAWN, SPAWN, SPAWN],
             blue: [SPAWN, SPAWN, SPAWN, SPAWN]
         },
         shields: {
-            red:  [false, false, false, false],
+            red: [false, false, false, false],
             blue: [false, false, false, false]
         },
         frozen: {
-            red:  [0, 0, 0, 0],
+            red: [0, 0, 0, 0],
             blue: [0, 0, 0, 0]
         }
     };
@@ -351,11 +359,10 @@ const rollDice = function (state) {
     if (state.phase !== "roll") {
         return state;
     }
-    return {
-        ...state,
+    return Object.assign({}, state, {
         dice: Math.floor(Math.random() * 6) + 1,
         phase: "move"
-    };
+    });
 };
 
 /**
@@ -368,11 +375,10 @@ const rollSprint = function (state) {
     if (state.phase !== "sprint") {
         return state;
     }
-    return {
-        ...state,
+    return Object.assign({}, state, {
         dice: Math.floor(Math.random() * 6) + 1,
         phase: "move"
-    };
+    });
 };
 
 /**
@@ -387,7 +393,7 @@ const getValidMoves = function (state) {
         return [];
     }
     const player = state.currentPlayer;
-    const dice   = state.dice;
+    const dice = state.dice;
 
     return state.pieces[player].reduce(function (acc, pos, idx) {
         if (state.sprintPiece !== null && idx !== state.sprintPiece) {
@@ -421,10 +427,14 @@ const movePiece = function (state, pieceIndex) {
         return state;
     }
 
-    const player    = state.currentPlayer;
-    const opp       = opponent(player);
+    const player = state.currentPlayer;
+    const opp = opponent(player);
     const currentPos = state.pieces[player][pieceIndex];
-    const newPos    = (currentPos === SPAWN) ? 0 : currentPos + state.dice;
+    const newPos = (
+        (currentPos === SPAWN)
+        ? 0
+        : currentPos + state.dice
+    );
 
     // Shield expires the moment a piece moves
     const noShield = setShield(state, player, pieceIndex, false);
@@ -435,7 +445,10 @@ const movePiece = function (state, pieceIndex) {
     // Steps 2-4 only apply when landing on the shared ring (pos 3-38)
     if (newPos < RING_START || newPos > RING_END) {
         if (checkWin(afterMove, player)) {
-            return { ...afterMove, winner: player, phase: "done" };
+            return Object.assign({}, afterMove, {
+                winner: player,
+                phase: "done"
+            });
         }
         return nextTurn(afterMove, opp);
     }
@@ -444,20 +457,25 @@ const movePiece = function (state, pieceIndex) {
 
     // 2. Check if this square is mined (by the opponent)
     const afterMine = applyMine(afterMove, player, pieceIndex, sharedPos);
-    const wasMined  = afterMine.pieces[player][pieceIndex] === SPAWN;
+    const wasMined = afterMine.pieces[player][pieceIndex] === SPAWN;
 
     if (wasMined) {
         if (checkWin(afterMine, player)) {
-            return { ...afterMine, winner: player, phase: "done" };
+            return Object.assign({}, afterMine, {
+                winner: player,
+                phase: "done"
+            });
         }
         return nextTurn(afterMine, opp);
     }
 
     // 3. Apply power-up (may move the piece further via boost, or change phase)
-    const powerUp      = POWER_UP_SQUARES[sharedPos];
-    const afterPowerUp = (powerUp !== undefined)
+    const powerUp = POWER_UP_SQUARES[sharedPos];
+    const afterPowerUp = (
+        (powerUp !== undefined)
         ? applyPowerUp(afterMine, player, pieceIndex, powerUp, sharedPos)
-        : afterMine;
+        : afterMine
+    );
 
     // 4. Apply capture at the piece's final position
     //    (boost may have moved the piece; capture skips power-up squares)
@@ -465,7 +483,10 @@ const movePiece = function (state, pieceIndex) {
 
     // Check for win
     if (checkWin(afterCapture, player)) {
-        return { ...afterCapture, winner: player, phase: "done" };
+        return Object.assign({}, afterCapture, {
+            winner: player,
+            phase: "done"
+        });
     }
 
     // Handle phases set by power-ups
@@ -490,11 +511,11 @@ const swapWith = function (state, enemyPieceIndex) {
     if (state.phase !== "swap") {
         return state;
     }
-    const player    = state.currentPlayer;
-    const opp       = opponent(player);
-    const myIdx     = state.actionPiece;
-    const myPos     = state.pieces[player][myIdx];
-    const enemyPos  = state.pieces[opp][enemyPieceIndex];
+    const player = state.currentPlayer;
+    const opp = opponent(player);
+    const myIdx = state.actionPiece;
+    const myPos = state.pieces[player][myIdx];
+    const enemyPos = state.pieces[opp][enemyPieceIndex];
 
     if (enemyPos < RING_START || enemyPos > RING_END) {
         return nextTurn(state, opp);    // not on ring — skip
@@ -505,9 +526,9 @@ const swapWith = function (state, enemyPieceIndex) {
 
     // Convert through shared coords so both pieces land on the correct
     // physical cell (path positions are player-relative, not shared).
-    const myShared    = toShared(myPos, player);
+    const myShared = toShared(myPos, player);
     const enemyShared = toShared(enemyPos, opp);
-    const myNewPos    = fromShared(enemyShared, player);
+    const myNewPos = fromShared(enemyShared, player);
     const enemyNewPos = fromShared(myShared, opp);
 
     // Both pieces move, so both shields expire
@@ -523,7 +544,7 @@ const swapWith = function (state, enemyPieceIndex) {
     return nextTurn(afterEnemyMove, opp);
 };
 
-// ── Read-only accessors ───────────────────────────────────────────────────────
+// ── Read-only accessors ──────────────────────────────────────────────────────
 
 /**
  * @param {GameState} state
