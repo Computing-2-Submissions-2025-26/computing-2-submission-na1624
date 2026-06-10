@@ -9,7 +9,12 @@
   "dependencies": {
     "ramda": "^0.32.0"
   },
+  "scripts": {
+    "test": "mocha",
+    "lint": "jslint web-app/**/*.js"
+  },
   "devDependencies": {
+    "@jslint-org/jslint": "^2026.4.30",
     "docdash": "^2.0.2",
     "mocha": "^11.7.5"
   }

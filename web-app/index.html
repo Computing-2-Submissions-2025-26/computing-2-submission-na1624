@@ -1,9 +1,133 @@
-<!-- In HTML Comments are written like this -->
-<!-- They can all be removed for your apps -->
-<!doctype html> <!-- This first line tells browsers to expect modern standard html 5 -->
-<html lang="en-gb"> <!-- This is indicates the page is written in British English, useful for accessibility -->
-<meta charset="utf-8"> <!-- This indicates how the file is encoded. utf-8 is standard -->
-<title>Your Web-app Title</title> <!-- All pages need a title, this will be displayed in the browser's title bar -->
-<link rel="stylesheet" href="default.css"> <!-- Import style sheet – default.css -->
-<link rel="icon" href="./assets/favicon.png"> <!-- Import 'Favorites Icon' – favicon.png -->
-<script type="module" src="main.js"></script> <!-- Load the main script. Must be type="module". Have only one of these -->
+<!doctype html>
+<html lang="en-gb">
+<meta charset="utf-8">
+<title>Power-Up Ludo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sekuya&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="default.css">
+<script type="module" src="main.js"></script>
+
+<body>
+    <header>
+        <h1>Power Up <span style="color: gold;">Ludo</span></h1>
+    </header>
+
+    <main>
+        <div class="game-wrapper">
+
+            <aside class="player-panel red-side" id="red-panel" aria-label="Red player status">
+                <div class="panel-header">
+                    <div class="panel-dot red" aria-hidden="true"></div>
+                    <strong>Red</strong>
+                </div>
+                <div class="panel-stats">
+                    <div class="stat-row">
+                        <span class="stat-label">Spawn</span>
+                        <span class="stat-val" id="red-spawn">4</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Board</span>
+                        <span class="stat-val" id="red-board">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Home</span>
+                        <span class="stat-val" id="red-home">0</span>
+                    </div>
+                </div>
+                <div class="token-row" id="red-tokens"></div>
+            </aside>
+
+            <div class="board-column">
+                <section aria-label="Game board">
+                    <div id="board" role="grid" aria-label="Game board"></div>
+                </section>
+
+                <div id="controls-bar">
+                    <div id="player-banner" aria-live="polite">
+                        <div id="player-dot" aria-hidden="true"></div>
+                        <span id="player-label">Red's Turn</span>
+                    </div>
+
+                    <div id="dice-area">
+                        <div
+                            id="dice-face"
+                            aria-label="Dice: not yet rolled"
+                            aria-live="polite"
+                        >–</div>
+                        <button id="roll-btn" type="button">Roll Dice</button>
+                        <div id="game-actions">
+                            <button id="undo-btn" type="button">↩ Undo</button>
+                            <button id="restart-btn-inline" type="button">↺ Restart</button>
+                        </div>
+                    </div>
+
+                    <p id="status-msg" aria-live="assertive" aria-atomic="true">
+                        Roll the dice to start.
+                    </p>
+                </div>
+            </div>
+
+            <aside class="player-panel blue-side" id="blue-panel" aria-label="Blue player status">
+                <div class="panel-header">
+                    <div class="panel-dot blue" aria-hidden="true"></div>
+                    <strong>Blue</strong>
+                </div>
+                <div class="panel-stats">
+                    <div class="stat-row">
+                        <span class="stat-label">Spawn</span>
+                        <span class="stat-val" id="blue-spawn">4</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Board</span>
+                        <span class="stat-val" id="blue-board">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Home</span>
+                        <span class="stat-val" id="blue-home">0</span>
+                    </div>
+                </div>
+                <div class="token-row" id="blue-tokens"></div>
+            </aside>
+
+        </div>
+
+        <details>
+            <summary>Power-Up Guide</summary>
+            <dl id="legend">
+                <dt class="pu-chip boost">⚡ Boost</dt>
+                <dd>Move forward 3 extra squares</dd>
+
+                <dt class="pu-chip shield">🛡️ Shield</dt>
+                <dd>Protected from capture for 1 turn</dd>
+
+                <dt class="pu-chip freeze">❄️ Freeze</dt>
+                <dd>This piece cannot move next turn</dd>
+
+                <dt class="pu-chip sprint">💨 Sprint</dt>
+                <dd>Roll the dice again, same piece moves</dd>
+
+                <dt class="pu-chip swap">🔄 Swap</dt>
+                <dd>Exchange positions with any enemy piece</dd>
+
+                <dt class="pu-chip bomb">💣 Bomb</dt>
+                <dd>Mines 3 squares — enemy landing there returns to spawn</dd>
+            </dl>
+        </details>
+    </main>
+
+    <div id="winner-overlay" hidden>
+        <div
+            id="winner-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="winner-heading"
+        >
+            <h2 id="winner-heading"></h2>
+            <p>All pieces made it home!</p>
+            <button id="restart-btn" type="button">Play Again</button>
+        </div>
+    </div>
+
+</body>
+</html>
