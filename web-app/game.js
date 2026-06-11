@@ -1,6 +1,6 @@
 /*jslint browser*/
 
-// ── Constants ────────────────────────────────────────────────────────────────
+// Constants
 
 const RING_LENGTH = 36;  // squares on the outer loop
 const FINISH = 42;       // position value meaning "back in Home Base"
@@ -24,7 +24,7 @@ const POWER_UP_SQUARES = Object.freeze({
     "34": "shield"
 });
 
-// ── Private helpers ─────────────────────────────────────────────────────────
+// Private helpers
 
 /**
  * Returns the opponent's colour.
@@ -319,7 +319,7 @@ const applyPowerUp = function (state, player, pieceIdx, powerUp, sharedPos) {
     return state;
 };
 
-// ── Public API ───────────────────────────────────────────────────────────────
+// Public API 
 
 /**
  * Creates and returns a fresh game state with both players' pieces in spawn.
@@ -544,7 +544,7 @@ const swapWith = function (state, enemyPieceIndex) {
     return nextTurn(afterEnemyMove, opp);
 };
 
-// ── Read-only accessors ──────────────────────────────────────────────────────
+// Read-only accessors 
 
 /**
  * @param {GameState} state

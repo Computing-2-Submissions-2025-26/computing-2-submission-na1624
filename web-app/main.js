@@ -1,6 +1,6 @@
 import Game from "./game.js";
 
-// ── Dice dot layout (3×3 grid positions 1-9, row-major) ──────────────────────
+// Dice dot layout (3×3 grid positions 1-9, row-major)
 const DOT_POSITIONS = Object.freeze({
     "1": [5],
     "2": [3, 7],
@@ -37,7 +37,7 @@ const renderDiceFace = function (value) {
     }
 };
 
-// ── Power-up icon map ────────────────────────────────────────────────────────
+// Power-up icon map
 const PU_ICON = Object.freeze({
     boost: "⚡",
     shield: "🛡️",
@@ -47,7 +47,7 @@ const PU_ICON = Object.freeze({
     bomb: "💣"
 });
 
-// ── Board coordinate maps ────────────────────────────────────────────────────
+// Board coordinate maps
 const RING_COORDS = [
     [5, 0], [4, 0], [3, 0], [2, 0], [1, 0], [0, 0],
     [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0, 7], [0, 8],
@@ -69,7 +69,7 @@ const SPAWN_COORDS = {
     blue: [[6, 3], [8, 3], [6, 5], [8, 5]]
 };
 
-// ── Coordinate helpers ───────────────────────────────────────────────────────
+// Coordinate helpers
 
 const coordsForPiece = function (player, pieceIdx, pos) {
     if (pos === -1 || pos === 42) {
@@ -96,7 +96,7 @@ const getCell = function (col, row) {
     return document.getElementById("cell-" + col + "-" + row);
 };
 
-// ── Board construction ───────────────────────────────────────────────────────
+// Board construction
 
 const cellTypeFor = function (col, row) {
     if (row === 0 || row === 8 || col === 0 || col === 10) {
@@ -193,7 +193,7 @@ const buildBoard = function () {
     }
 };
 
-// ── Rendering helpers ────────────────────────────────────────────────────────
+// Rendering helpers
 
 const clearPieces = function () {
     document.querySelectorAll(".piece").forEach(function (el) {
@@ -465,7 +465,7 @@ const showWinner = function (winner) {
     document.getElementById("restart-btn").focus();
 };
 
-// ── Main render ──────────────────────────────────────────────────────────────
+// Main render
 
 const render = function (state, prevState) {
     clearPieces();
@@ -481,7 +481,7 @@ const render = function (state, prevState) {
     }
 };
 
-// ── Animation ────────────────────────────────────────────────────────────────
+// Animation
 
 let isAnimating = false;
 
@@ -561,7 +561,7 @@ const animateMove = function (player, pieceIdx, startPos, dice, onDone) {
     tick();
 };
 
-// ── Event handlers ───────────────────────────────────────────────────────────
+// Event handlers
 
 let gameState = Game.createGame();
 let stateHistory = [gameState];
@@ -687,6 +687,6 @@ document.getElementById("undo-btn").addEventListener("click", function () {
     render(gameState);
 });
 
-// ── Initialise ───────────────────────────────────────────────────────────────
+// Initialise
 buildBoard();
 render(gameState);
