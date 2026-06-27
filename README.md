@@ -1,53 +1,72 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/H6lPFq0J)
-# Computing 2 Coursework Submission.
-**CID**: [YOUR CID]
 
-This is the submission template for your Computing 2 Applications coursework submission.
+# Power-Up Ludo
 
-## Checklist
-### Install dependencies locally
-This template relies on a a few packages from the Node Package Manager, npm.
-To install them run the following commands in the terminal.
-```properties
+Power-Up Ludo is a two-player board game based on classic Ludo. Red and Blue race to get all four of their pieces from spawn, around the shared outer ring, and into their home base. Special power-up squares scattered around the ring change the game with boosts, shields, freezes, sprints, swaps, and bombs.
+
+Red always goes first. The first player to bring all four pieces home wins.
+
+## How to Play
+
+Each player starts with four pieces in their spawn area. A piece can only leave spawn on a roll of **1 or 6**.
+
+On each turn, click **Roll Dice**. Valid pieces to move are highlighted — click one to move it. If no valid moves exist after rolling, the turn passes automatically.
+
+Pieces travel clockwise around the shared outer ring before heading down their home stretch. Landing on the same square as an enemy piece sends that enemy back to spawn, unless they are shielded. Captures cannot happen on power-up squares.
+
+### Power-Ups
+
+| Power-Up | Effect |
+|---|---|
+| ⚡ Boost | Move forward 3 extra squares instantly |
+| 🛡️ Shield | Protected from capture until the piece next moves |
+| ❄️ Freeze | The piece cannot move for 2 turns |
+| 💨 Sprint | Roll again — the same piece moves a second time |
+| 🔄 Swap | Choose any enemy piece on the ring to swap positions with |
+| 💣 Bomb | Plants mines on 3 nearby squares — any piece landing there returns to spawn |
+
+Use **↩ Undo** to step back one move, or **↺ Restart** to reset the game at any time.
+
+## Project Files
+
+- `web-app/game.js` — pure game rules and state transitions
+- `web-app/main.js` — browser UI, piece animations, and event handling
+- `web-app/index.html` — page structure and layout
+- `web-app/default.css` — board and interface styling
+- `web-app/tests/` — unit tests for the game module
+
+The browser code asks the game module what moves are valid and redraws the interface accordingly. All rules for movement, power-ups, captures, and win conditions are kept in `game.js` so the game can be tested independently from the browser.
+
+## Game Module API
+
+The public API is in `web-app/game.js`. It creates games, rolls dice, returns valid moves, applies piece moves and power-up effects, handles swap and sprint phases, and exposes read-only accessors for all game state.
+
+## Game Module Implementation
+
+The game module is written as pure state transitions. Illegal actions return the unchanged state, finished games do not advance, and the browser code does not decide the rules directly.
+
+## Unit Tests
+
+Tests cover the core behaviours of the game module: initial state, deploying pieces, movement, captures, each power-up effect, the freeze and shield mechanics, and the win condition.
+
+## Web Application
+
+The web app uses HTML for structure, CSS for presentation, and `main.js` for browser behaviour. It supports mouse input, dice animation, piece movement animation, power-up highlighting, an undo stack, and a winner overlay.
+
+## Installation
+
+Clone the repository, then run:
+
+```bash
 npm install
 ```
-These won't be uploaded to your repository because of the `.gitignore`.
-I'll run the same commands when I download your repos.
 
-### Game Module – API
-*You will produce an API specification, i.e. a list of function names and their signatures, for a Javascript module that represents the state of your game and the operations you can perform on it that advances the game or provides information.*
+## Running
 
-- [ ] Include a `.js ` module file in `/web-app` containing the API using `jsdoc`.
-- [ ] Update `/jsdoc.json` to point to this module in `.source.include` (line 7)
-- [ ] Compile jsdoc using the run configuration `Generate Docs`
-- [ ] Check the generated docs have compiled correctly.
+Open `web-app/index.html` directly in your browser, or use the VS Code **Run Web App** configuration if available.
 
-### Game Module – Implementation
-*You will implement, in Javascript, the module you specified above. Such that your game can be simulated in code, e.g. in the debug console.*
+Useful commands:
 
-- [ ] The file above should be fully implemented.
-
-### Unit Tests – Specification
-*For the Game module API you have produced, write a set of unit tests descriptions that specify the expected behaviour of one aspect of your API, e.g. you might pick the win condition, or how the state changes when a move is made.*
-
-- [ ] Write unit test definitions in `/web-app/tests`.
-- [ ] Check the headings appear in the Testing sidebar.
-
-### Unit Tests – Implementation
-*Implement in code the unit tests specified above.*
-
-- [ ] Implement the tests above.
-
-### Web Application
-*Produce a web application that allows a user to interface with your game module.*
-
-- Implement in `/web-app`
-  - [ ] `index.html`
-  - [ ] `default.css`
-  - [ ] `main.js`
-  - [ ] Any other files you need to include.
-
-### Finally
-- [ ] Push to GitHub.
-- [ ] Sync the changes.
-- [ ] Check submission on GitHub website.
+```bash
+npm test
+npm run docs
+```
